@@ -1,11 +1,11 @@
 import aiohttp
 
+import asyncio
+
 from backend.server1C.webhook_api import WebHookRequestsHeaders
 from backend.server1C.webhook_api import WebHookAPI
 
 from misc.format_data import format_phone_number
-
-import asyncio
 
 
 class Server1CRequests:

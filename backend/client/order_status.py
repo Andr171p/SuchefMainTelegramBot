@@ -1,6 +1,5 @@
 import asyncio
 import json
-import time
 
 from backend.server1C.webhook_exchange import Server1CRequests
 # from backend.database.today_orders_db.db_orders_manage import OrdersEngineDB
@@ -215,9 +214,6 @@ def pretty_message_from_response(order_data):
 
 class OrdersAtTheMoment:
     def __init__(self):
-        '''self.response = asyncio.run(
-            Server1CRequests().get_orders_response()
-        )'''
         self.response = None
 
     async def response_from_server(self):

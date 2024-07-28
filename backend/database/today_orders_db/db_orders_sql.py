@@ -25,3 +25,17 @@ class OrdersSQL:
                         "(phone_number, client, number, date, status, amount, pay_link, pay_status, cooking_time_from, cooking_time_to, delivery_time_from, delivery_time_to, project, trade_point, trade_point_card, delivery_method, delivery_adress)" \
                         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     data_from_phone_number_query = "SELECT * FROM `users_orders` WHERE phone_number = %s"
+    update_sent_query = " UPDATE `users_orders`" \
+                        " SET sent=1" \
+                        " WHERE status IN "
+    check_sent_query = " SELECT *" \
+                       " FROM `users_orders`" \
+                       " WHERE phone_number=%s AND sent=1"
+    get_order_query = " SELECT *" \
+                      " FROM `users_orders`" \
+                      " WHERE phone_number = %s AND number = %s"
+    update_data_query = " UPDATE `users_orders`" \
+                        " SET status = %s" \
+                        " WHERE number = %s"
+    delete_data_query = " DELETE FROM `users_orders`" \
+                        " WHERE phone_number = %s"
