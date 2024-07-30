@@ -69,6 +69,6 @@ print(len(r.keys))
 print(r.create_matrix())'''
 
 
-f = [{'id': 1, 'phone_number': '9088777711', 'client': 'Савельева Любовь', 'number': 'БТ-074232', 'date': '2024-07-26T00:00:00', 'status': 'Принят оператором', 'sent': 1, 'amount': 1880, 'pay_link': 'https://securepayments.tinkoff.ru/TRHWK9LI', 'pay_status': 'NEW', 'cooking_time_from': '0001-01-01T00:00:00', 'cooking_time_to': '0001-01-01T13:25:00', 'delivery_time_from': '0001-01-01T13:30:00', 'delivery_time_to': '0001-01-01T14:00:00', 'project': 'Сушеф.рф', 'trade_point': 'Московский тракт, 87к1', 'trade_point_card': "MockoBcku'u TpakT 87 k.1 https://go.2gis.com/pdacd", 'delivery_method': 'Самовывоз', 'delivery_adress': ''}]
+'''f = [{'id': 1, 'phone_number': '9088777711', 'client': 'Савельева Любовь', 'number': 'БТ-074232', 'date': '2024-07-26T00:00:00', 'status': 'Принят оператором', 'sent': 1, 'amount': 1880, 'pay_link': 'https://securepayments.tinkoff.ru/TRHWK9LI', 'pay_status': 'NEW', 'cooking_time_from': '0001-01-01T00:00:00', 'cooking_time_to': '0001-01-01T13:25:00', 'delivery_time_from': '0001-01-01T13:30:00', 'delivery_time_to': '0001-01-01T14:00:00', 'project': 'Сушеф.рф', 'trade_point': 'Московский тракт, 87к1', 'trade_point_card': "MockoBcku'u TpakT 87 k.1 https://go.2gis.com/pdacd", 'delivery_method': 'Самовывоз', 'delivery_adress': ''}]
 i = InsertValues(db_row_data=f)
-print(i.create_values_tuple())
+print(i.create_values_tuple())'''

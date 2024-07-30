@@ -8,7 +8,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from telegram_bot.tg_auth_data import BotToken
 from telegram_bot.bot.handlers import router
 
-from backend.database.db_update_data import db_update_orders_data
+from backend.database.db_update_data import db_loop_update_orders_data
 
 
 async def main():
@@ -19,15 +19,8 @@ async def main():
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 
-if __name__ == "__main__":
-    '''asyncio.run(db_update_orders_data())
-    logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())'''
+async def start_work():
+    await asyncio.gather(db_loop_update_orders_data(), main())
 
-    ioloop = asyncio.get_event_loop()
-    tasks = [
-        ioloop.create_task(db_update_orders_data()),
-        ioloop.create_task(main())
-    ]
-    ioloop.run_until_complete(asyncio.wait(tasks))
-    ioloop.close()
+if __name__ == "__main__":
+    asyncio.run(start_work())

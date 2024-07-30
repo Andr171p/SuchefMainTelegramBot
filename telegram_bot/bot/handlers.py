@@ -14,11 +14,10 @@ from telegram_bot.bot.state import UserPhoneNumberForm, ReplaceUserPhoneNumberFo
 from telegram_bot.bot.storage import UserInfoStorage, TriggerStatusStorage
 
 from backend.database.auth_db.db_auth_manage import SuchefAuthDB
-from backend.database.today_orders_db.db_orders_manage import SuchefOrdersDB
 
-from backend.client.order_status import MyOrderStatus, TriggerOrdersStatus, TodayOrders
-from backend.client.order_status import pretty_message_from_response
 from backend.client.stock import ActualStock
+
+from repository import OrdersRepository
 
 from misc.format_data import format_phone_number
 
@@ -30,8 +29,6 @@ router = Router()
 
 suchef_auth_db = SuchefAuthDB()
 
-suchef_orders_db = SuchefOrdersDB()
-
 user_info_storage = UserInfoStorage()
 
 trigger_status_storage = TriggerStatusStorage()
@@ -41,8 +38,9 @@ actual_stock = ActualStock()
 
 @router.message(Command("start"))
 async def start_handler(message: Message):
-    user_name = message.from_user.first_name
+    orders_repository = OrdersRepository()
 
+    user_name = message.from_user.first_name
     user_id = message.from_user.id
 
     if suchef_auth_db.db_check_user_id_exists(telegram_id=user_id):
@@ -56,9 +54,9 @@ async def start_handler(message: Message):
             reply_markup=await start_keyboard()
         )
 
-    await check_trigger_status(
+    await orders_repository.check_trigger_status(
         message=message,
-        telegram_id=user_id
+        user_id=user_id
     )
 
 
@@ -142,38 +140,11 @@ async def input_phone_number(message: Message, state: FSMContext):
 @router.message(F.text == OrderStatusButtons.get_status_button)
 async def order_status_handler(message: Message):
     user_id = message.from_user.id
-
-    phone_number = suchef_auth_db.db_phone_number_from_id(
-        telegram_id=user_id
+    orders_repository = OrdersRepository()
+    await orders_repository.order_status(
+        message=message,
+        user_id=user_id
     )
-
-    await message.answer(MessageInterface().search_order_message)
-
-    my_order_status = MyOrderStatus(
-        client_phone_number=phone_number
-    )
-
-    response = my_order_status.get_order_status()
-
-    if response == -1 or len(response) == 0:
-        await message.answer(MessageInterface().empty_order_message)
-        await message.answer(MessageInterface().problem_status_message)
-        await message.answer(
-            MessageInterface(user_phone_number=phone_number).phone_number_question(),
-            reply_markup=await re_register_keyboard()
-        )
-    else:
-        for i in range(len(response)):
-            time.sleep(1)
-            if len(response[i]) != 1:
-                await message.answer(
-                    response[i][0],
-                    reply_markup=await pay_link_keyboard(pay_link=response[i][-1])
-                )
-            else:
-                await message.answer(
-                    response[i][0]
-                )
 
 
 @router.callback_query(F.data == 'correct_phone_number')
@@ -211,40 +182,6 @@ async def replace_phone_number_handler(message: Message, state: FSMContext):
         reply_markup=await order_status_keyboard()
     )
     await state.clear()
-
-
-async def check_trigger_status(message, telegram_id):
-    while True:
-        phone_number = suchef_auth_db.db_phone_number_from_id(
-            telegram_id=telegram_id
-        )
-
-        response = suchef_orders_db.db_check_update_status(
-            trigger_status=TriggerOrdersStatus.trigger_order_status
-        )
-
-        client_orders = []
-        for orders in response:
-            if format_phone_number(orders['phone_number']) == phone_number:
-                client_orders.append(orders)
-
-        if response != -1:
-            for order in client_orders:
-                storage_callback = trigger_status_storage.check_stack(
-                    trigger_status=order['status']
-                )
-                if storage_callback != -1:
-                    status = pretty_message_from_response(
-                        order_data=order
-                    )
-                    await message.answer(
-                        status,
-                        reply_markup=await pay_link_keyboard(
-                            order['pay_link']
-                        )
-                    )
-
-        await asyncio.sleep(60)
 
 
 @router.message(F.text == OrderStatusButtons.get_stock_button)

@@ -1,7 +1,10 @@
 import aiomysql
 
-from backend.database.db_loader import loop
+from backend.database.db_loader import create_event_loop
 from backend.database.db_config import AccessDB
+
+
+loop = create_event_loop()
 
 
 async def connect():
